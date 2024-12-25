@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Env string `env:"ENV" env-default:"local" env-required:"true"`
 	Listen
+	StorageConfig
 }
 
 // TODO Разобраться с таймаутами
@@ -21,6 +22,15 @@ type Listen struct {
 	WithEndpoint bool          `env:"WITH_ENDPOINT" env-default:"true"`
 	Timeout      time.Duration `env:"TIMEOUT" env-default:"4s"`
 	IdleTimeout  time.Duration `env:"IDLE_TIMEOUT" env-default:"60s"`
+}
+
+type StorageConfig struct {
+	DBHost     string `env:"DB_HOST" env-default:"localhost"`
+	DBPort     string `env:"DB_PORT" env-default:"5432"`
+	DBUsername string `env:"DB_USER" env-default:"postgres"`
+	DBPassword string `env:"DB_PASSWORD" env-default:"password"`
+	DBName     string `env:"DB_NAME" env-default:"wallet_db"`
+	SSLMode    string `env:"DB_SSLMODE" env-default:"disable"`
 }
 
 func MustLoad(configPath string) *Config {
