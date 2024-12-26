@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/emmonbear/wallet-exchanger/internal/config"
+	"github.com/emmonbear/wallet-exchanger/internal/storage/postgres"
 )
 
 const (
@@ -31,7 +32,11 @@ func main() {
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	// TODO: init storage: postgres
+	_, err := postgres.New(cfg)
+	if err != nil {
+		log.Error("database connection error: ", err)
+
+	}
 
 	// TODO: init router: chi, "chi render" (gin)
 
