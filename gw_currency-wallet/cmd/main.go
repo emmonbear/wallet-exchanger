@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/emmonbear/wallet-exchanger/internal/config"
+	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
 	"github.com/emmonbear/wallet-exchanger/internal/storage/postgres"
 )
 
@@ -32,12 +33,13 @@ func main() {
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	_, err := postgres.New(cfg)
+	storage, err := postgres.New(cfg)
 	if err != nil {
-		log.Error("database connection error: ", err)
-
+		log.Error("failed to init storage", sl.Err(err))
+		os.Exit(1)
 	}
 
+	_ = storage
 	// TODO: init router: chi, "chi render" (gin)
 
 	// TODO: run server:
