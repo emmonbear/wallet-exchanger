@@ -26,11 +26,11 @@ type Listen struct {
 
 type StorageConfig struct {
 	DBHost     string `env:"DB_HOST" env-default:"localhost"`
-	DBPort     string `env:"DB_PORT" env-default:"5432"`
+	DBPort     int    `env:"DB_PORT" env-default:"5432"`
 	DBUsername string `env:"DB_USER" env-default:"postgres"`
 	DBPassword string `env:"DB_PASSWORD" env-default:"password"`
 	DBName     string `env:"DB_NAME" env-default:"wallet_db"`
-	SSLMode    string `env:"DB_SSLMODE" env-default:"disable"`
+	DBSSLMode  string `env:"DB_SSLMODE" env-default:"disable"`
 }
 
 func MustLoad(configPath string) *Config {
