@@ -18,15 +18,19 @@ const (
 	envProd  = "prod"
 )
 
-func main() {
-	configPath := flag.String("c", "", "Path to config file")
+var configPath string
+
+func init() {
+	flag.StringVar(&configPath, "c", "", "Path to config file")
 	flag.Parse()
 
-	if *configPath == "" {
+	if configPath == "" {
 		log.Fatalf("Config file path not provided. Use -c flag to specify the path")
 	}
+}
 
-	cfg := config.MustLoad(*configPath)
+func main() {
+	cfg := config.MustLoad(configPath)
 	fmt.Println(cfg)
 
 	log := setupLogger(cfg.Env)
@@ -40,7 +44,12 @@ func main() {
 	}
 
 	_ = storage
-	// TODO: init router: chi, "chi render" (gin)
+
+	// router := chi.NewRouter()
+
+	// TODO: middleware - Добавить логгер запросов
+	// TODO: middleware - Реализовать recoverer
+	// TODO: slog - Реализовать PrettyLogger
 
 	// TODO: run server:
 }
