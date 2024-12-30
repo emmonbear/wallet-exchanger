@@ -8,7 +8,11 @@ import (
 	"os"
 
 	"github.com/emmonbear/wallet-exchanger/internal/config"
+	"github.com/emmonbear/wallet-exchanger/internal/handler"
 	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/internal/server"
+	"github.com/emmonbear/wallet-exchanger/internal/service"
+	"github.com/emmonbear/wallet-exchanger/internal/storage"
 	"github.com/emmonbear/wallet-exchanger/internal/storage/postgres"
 )
 
@@ -34,16 +38,23 @@ func main() {
 	fmt.Println(cfg)
 
 	log := setupLogger(cfg.Env)
-	log.Info("starting url-shortener", slog.String("env", cfg.Env))
+	log.Info("starting wallet-server", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	storage, err := postgres.New(cfg)
+	db, err := postgres.New(cfg)
 	if err != nil {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
 
-	_ = storage
+	// _ = storage
+	repos := storage.NewStorage(db)
+	services := service.NewService(repos)
+	handlers := handler.NewHandler(services)
+	srv := new(server.Server)
+	if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
+		log.Error("error occured while running http server", sl.Err(err))
+	}
 
 	// router := chi.NewRouter()
 
