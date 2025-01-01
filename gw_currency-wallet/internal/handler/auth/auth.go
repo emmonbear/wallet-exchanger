@@ -8,7 +8,6 @@ type AuthHandler interface {
 }
 
 type handler struct {
-
 }
 
 func NewHandler() *handler {
