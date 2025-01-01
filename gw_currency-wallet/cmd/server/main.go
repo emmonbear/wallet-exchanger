@@ -10,10 +10,10 @@ import (
 	"github.com/emmonbear/wallet-exchanger/internal/config"
 	"github.com/emmonbear/wallet-exchanger/internal/handler"
 	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/internal/repository"
+	"github.com/emmonbear/wallet-exchanger/internal/repository/postgres"
 	"github.com/emmonbear/wallet-exchanger/internal/server"
 	"github.com/emmonbear/wallet-exchanger/internal/service"
-	"github.com/emmonbear/wallet-exchanger/internal/storage"
-	"github.com/emmonbear/wallet-exchanger/internal/storage/postgres"
 )
 
 const (
@@ -47,8 +47,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	// _ = storage
-	repos := storage.NewStorage(db)
+	_ = db
+	repos := repository.NewRepository()
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 	srv := new(server.Server)
