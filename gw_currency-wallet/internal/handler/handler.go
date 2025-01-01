@@ -5,18 +5,21 @@ import (
 	"github.com/emmonbear/wallet-exchanger/internal/handler/balance"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/exchange"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/wallet"
+	"github.com/emmonbear/wallet-exchanger/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
+	*service.Service
 	auth.AuthHandler
 	balance.BalanceHandler
 	exchange.ExchangeHandler
 	wallet.WalletHandler
 }
 
-func NewHandler() *Handler {
+func NewHandler(services *service.Service) *Handler {
 	return &Handler{
+		Service:         services,
 		AuthHandler:     auth.NewHandler(),
 		BalanceHandler:  balance.NewHandler(),
 		ExchangeHandler: exchange.NewHandler(),
