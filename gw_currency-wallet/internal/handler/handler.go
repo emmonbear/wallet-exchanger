@@ -1,16 +1,18 @@
 package handler
 
 import (
-	"github.com/emmonbear/wallet-exchanger/internal/service"
+	"github.com/emmonbear/wallet-exchanger/internal/handler/auth"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	services *service.Service
+	auth.AuthHandler
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler() *Handler {
+	return &Handler{
+		AuthHandler: auth.NewHandler(),
+	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
@@ -18,7 +20,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	auth := router.Group("/api/v1")
 	{
-		auth.POST("/register", h.signUp)
+		auth.POST("/register", h.SignUp)
+		auth.POST("/login", h.SignIn)
 	}
+
+	// TODO Добавить инициализацию
+	api := router.Group("/api/v1")
+	{
+		api.GET("/balance")
+		api.POST("/deposit")
+		api.POST("/withdraw")
+		api.POST("/exchange")
+		api.GET("/exchange/rates")
+	}
+
 	return router
 }
