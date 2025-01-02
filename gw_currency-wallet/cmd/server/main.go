@@ -14,6 +14,7 @@ import (
 	"github.com/emmonbear/wallet-exchanger/internal/repository/postgres"
 	"github.com/emmonbear/wallet-exchanger/internal/server"
 	"github.com/emmonbear/wallet-exchanger/internal/service"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -47,10 +48,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = db
-	repos := repository.NewRepository()
+	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	handlers := handler.NewHandler(services, log)
 	srv := new(server.Server)
 	if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
 		log.Error("error occured while running http server", sl.Err(err))
