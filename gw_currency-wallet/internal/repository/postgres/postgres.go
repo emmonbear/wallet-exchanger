@@ -8,11 +8,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	UserTable     = "users"
+	WalletTable   = "wallets"
+	CurrencyTable = "currency"
+)
+
 type Storage struct {
 	db *sqlx.DB
 }
 
-func New(cfg *config.Config) (*Storage, error) {
+func New(cfg *config.Config) (*sqlx.DB, error) {
 	connStr := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.StorageConfig.DBHost,
@@ -27,7 +33,7 @@ func New(cfg *config.Config) (*Storage, error) {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
-	return &Storage{db: db}, nil
+	return db, nil
 }
 
 func (s *Storage) Close() error {
