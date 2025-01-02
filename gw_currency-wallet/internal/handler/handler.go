@@ -37,7 +37,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	auth := router.Group("/api/v1")
 	{
 		auth.POST("/register", h.SignUp)
-		auth.GET("/login", h.SignIn)
+		auth.POST("/login", h.SignIn)
 	}
 
 	// TODO Добавить инициализацию
