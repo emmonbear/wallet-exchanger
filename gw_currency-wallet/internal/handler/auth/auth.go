@@ -46,5 +46,21 @@ func (h *handler) SignUp(ctx *gin.Context) {
 }
 
 func (h *handler) SignIn(ctx *gin.Context) {
+	var input model.AuthRequest
+
+	if err := ctx.BindJSON(&input); err != nil {
+		sl.NewErrorResponse(ctx, http.StatusBadRequest, err.Error(), h.logger, err)
+		return
+	}
+
+	token, err := h.services.AuthService.GenerateToken(input.Username, input.Password)
+	if err != nil {
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, err.Error(), h.logger, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 
 }
