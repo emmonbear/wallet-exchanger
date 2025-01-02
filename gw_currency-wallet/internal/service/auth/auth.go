@@ -9,6 +9,7 @@ import (
 type AuthService interface {
 	CreateUser(user model.User) (int, error)
 	GenerateToken(username, password string) (string, error)
+	ParseToken(token string) (int, error)
 }
 
 type service struct {
@@ -31,4 +32,8 @@ func (s *service) GenerateToken(username, password string) (string, error) {
 	}
 
 	return security.GenerateJWTToken(user)
+}
+
+func (s *service) ParseToken(token string) (int, error) {
+	return security.ParseJWTToken(token)
 }
