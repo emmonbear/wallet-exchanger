@@ -20,6 +20,11 @@ func Err(err error) slog.Attr {
 func NewErrorResponse(
 	ctx *gin.Context, statusCode int, message string, log *slog.Logger, err error,
 ) {
-	log.Error(message, Err(err))
+	log.Error(message,
+		Err(err),
+		slog.String("method", ctx.Request.Method),
+		slog.String("path", ctx.Request.URL.Path),
+		slog.String("client_ip", ctx.ClientIP()),
+	)
 	ctx.AbortWithStatusJSON(statusCode, response{Message: message})
 }
