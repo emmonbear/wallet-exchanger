@@ -6,6 +6,7 @@ import (
 	"github.com/emmonbear/wallet-exchanger/internal/handler/auth"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/balance"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/exchange"
+	"github.com/emmonbear/wallet-exchanger/internal/handler/middleware"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/wallet"
 	"github.com/emmonbear/wallet-exchanger/internal/service"
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ type Handler struct {
 	balance.BalanceHandler
 	exchange.ExchangeHandler
 	wallet.WalletHandler
+	middleware.Middleware
 }
 
 func NewHandler(
@@ -28,6 +30,7 @@ func NewHandler(
 		BalanceHandler:  balance.NewHandler(),
 		ExchangeHandler: exchange.NewHandler(),
 		WalletHandler:   wallet.NewHandler(),
+		Middleware:      middleware.NewHandler(logger, services),
 	}
 }
 
@@ -40,8 +43,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/login", h.SignIn)
 	}
 
-	// TODO Добавить инициализацию
-	api := router.Group("/api/v1")
+	api := router.Group("/api/v1", h.UserIdentity)
 	{
 		api.GET("/balance", h.GetBalance)
 		api.POST("/deposit", h.Deposit)
