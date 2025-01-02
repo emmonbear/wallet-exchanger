@@ -1,6 +1,11 @@
 package wallet
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/emmonbear/wallet-exchanger/internal/handler/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 type WalletHandler interface {
 	Deposit(ctx *gin.Context)
@@ -13,6 +18,11 @@ func NewHandler() *handler {
 	return &handler{}
 }
 
-func (h *handler) Deposit(ctx *gin.Context) {}
+func (h *handler) Deposit(ctx *gin.Context) {
+	id, _ := ctx.Get(middleware.UserCtx)
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
+}
 
 func (h *handler) Withdraw(ctx *gin.Context) {}
