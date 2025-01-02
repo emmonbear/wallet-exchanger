@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"log/slog"
+
 	"github.com/emmonbear/wallet-exchanger/internal/handler/auth"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/balance"
 	"github.com/emmonbear/wallet-exchanger/internal/handler/exchange"
@@ -17,10 +19,12 @@ type Handler struct {
 	wallet.WalletHandler
 }
 
-func NewHandler(services *service.Service) *Handler {
+func NewHandler(
+	services *service.Service, logger *slog.Logger,
+) *Handler {
 	return &Handler{
 		Service:         services,
-		AuthHandler:     auth.NewHandler(),
+		AuthHandler:     auth.NewHandler(logger, services),
 		BalanceHandler:  balance.NewHandler(),
 		ExchangeHandler: exchange.NewHandler(),
 		WalletHandler:   wallet.NewHandler(),
