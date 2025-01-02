@@ -18,7 +18,7 @@ type Config struct {
 // TODO Разобраться с таймаутами
 type Listen struct {
 	HostEndpoint string        `env:"HOST" env-default:"localhost"`
-	PortEndpoint int           `env:"PORT" env-default:"8080"`
+	PortEndpoint string        `env:"PORT" env-default:"8080"`
 	WithEndpoint bool          `env:"WITH_ENDPOINT" env-default:"true"`
 	Timeout      time.Duration `env:"TIMEOUT" env-default:"4s"`
 	IdleTimeout  time.Duration `env:"IDLE_TIMEOUT" env-default:"60s"`
