@@ -52,7 +52,7 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services, log)
 	srv := new(server.Server)
-	if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
+	if err := srv.Run(cfg.Listen.PortEndpoint, handlers.InitRoutes()); err != nil {
 		log.Error("error occured while running http server", sl.Err(err))
 	}
 
