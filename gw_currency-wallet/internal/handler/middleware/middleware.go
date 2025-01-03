@@ -13,7 +13,7 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	UserCtx             = "userId"
+	UserCtx             = "userID"
 )
 
 type Middleware interface {
@@ -35,21 +35,29 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 func (h *handler) UserIdentity(ctx *gin.Context) {
 	header := ctx.GetHeader(authorizationHeader)
 	if header == "" {
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, "empty auth header", h.logger, fmt.Errorf("empty auth header"))
+		errMsg := "empty auth header"
+		h.logger.Error("Authorization header is missing", slog.String("error", errMsg))
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
 		return
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, "invalid auth header", h.logger, fmt.Errorf("empty auth header"))
+		errMsg := "invalid auth header"
+		h.logger.Error("Authorization header format is incorrect", slog.String("error", errMsg), slog.String("header", header))
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
 		return
 	}
 
-	userId, err := h.services.AuthService.ParseToken(headerParts[1])
+	h.logger.Info("Parsing token", slog.String("token", headerParts[1]))
+
+	userID, err := h.services.AuthService.ParseToken(headerParts[1])
 	if err != nil {
+		h.logger.Error("Error parsing token", slog.String("error", err.Error()), slog.String("token", headerParts[1]))
 		sl.NewErrorResponse(ctx, http.StatusUnauthorized, err.Error(), h.logger, err)
 		return
 	}
 
-	ctx.Set(UserCtx, userId)
+	h.logger.Info("Token parsed successfully", slog.Int("userID", userID))
+	ctx.Set(UserCtx, userID)
 }
