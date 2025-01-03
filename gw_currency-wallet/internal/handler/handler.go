@@ -27,7 +27,7 @@ func NewHandler(
 	return &Handler{
 		Service:         services,
 		AuthHandler:     auth.NewHandler(logger, services),
-		BalanceHandler:  balance.NewHandler(),
+		BalanceHandler:  balance.NewHandler(logger, services),
 		ExchangeHandler: exchange.NewHandler(),
 		WalletHandler:   wallet.NewHandler(),
 		Middleware:      middleware.NewHandler(logger, services),
