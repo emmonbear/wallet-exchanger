@@ -1,1 +1,2 @@
+DROP TABLE IF EXISTS user_balances;
 DROP TABLE IF EXISTS users;
