@@ -6,7 +6,6 @@ import (
 	"github.com/emmonbear/wallet-exchanger/internal/repository/exchange"
 	"github.com/emmonbear/wallet-exchanger/internal/repository/postgres"
 	"github.com/emmonbear/wallet-exchanger/internal/repository/wallet"
-	"github.com/jmoiron/sqlx"
 )
 
 type Repository struct {
@@ -16,8 +15,9 @@ type Repository struct {
 	wallet.WalletRepository
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
+func NewRepository(db postgres.Database) *Repository {
 	return &Repository{
-		AuthRepository: postgres.NewAuthPostgres(db),
+		AuthRepository:    postgres.NewAuthPostgres(db),
+		BalanceRepository: postgres.NewBalancePostgres(db),
 	}
 }
