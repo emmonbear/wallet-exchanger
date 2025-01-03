@@ -7,7 +7,7 @@ import (
 )
 
 type AuthService interface {
-	CreateUser(user model.User) (int, error)
+	CreateUser(user model.User) error
 	GenerateToken(username, password string) (string, error)
 	ParseToken(token string) (int, error)
 }
@@ -20,7 +20,7 @@ func NewService(repo auth.AuthRepository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) CreateUser(user model.User) (int, error) {
+func (s *service) CreateUser(user model.User) error {
 	user.Password = security.GeneratePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }

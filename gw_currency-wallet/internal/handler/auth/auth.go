@@ -34,14 +34,14 @@ func (h *handler) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.services.AuthService.CreateUser(input)
+	err := h.services.AuthService.CreateUser(input)
 	if err != nil {
-		sl.NewErrorResponse(ctx, http.StatusInternalServerError, err.Error(), h.logger, err)
+		sl.NewErrorResponse(ctx, http.StatusBadRequest, "Username or email already exists", h.logger, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
+	ctx.JSON(http.StatusCreated, map[string]interface{}{
+		"message": "User registered successfully",
 	})
 }
 
