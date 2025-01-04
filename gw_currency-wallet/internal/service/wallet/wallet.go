@@ -1,6 +1,9 @@
 package wallet
 
-type WalletService interface{}
+type WalletService interface{
+	Deposit()
+}
+
 type service struct{}
 
 func NewService() *service {
