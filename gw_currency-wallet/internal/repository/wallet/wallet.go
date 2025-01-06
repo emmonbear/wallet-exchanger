@@ -1,5 +1,7 @@
 package wallet
 
-type WalletRepository interface{}
+import "github.com/emmonbear/wallet-exchanger/internal/model"
 
-type repository struct{}
+type WalletRepository interface {
+	Deposit(wallet *model.Wallet) (float64, error)
+}
