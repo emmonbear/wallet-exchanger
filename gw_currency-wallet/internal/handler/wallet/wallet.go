@@ -7,6 +7,7 @@ import (
 
 	"github.com/emmonbear/wallet-exchanger/internal/handler/middleware"
 	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/internal/model"
 	"github.com/emmonbear/wallet-exchanger/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -29,19 +30,26 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 }
 
 func (h *handler) Deposit(ctx *gin.Context) {
-
-	const op = "user is not found"
-	id, ok := ctx.Get(middleware.UserCtx)
-	// TODO Исправить логирование ошибок
+	userID, ok := ctx.Get(middleware.UserCtx)
 	if !ok {
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, op, h.logger, fmt.Errorf(op))
+		errMsg := "user id not found"
+		h.logger.Error(errMsg)
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
 		return
 	}
 
-	deposit, err := h.services.BalanceService.Deposit()
-	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
+	input := &model.Wallet{
+		UserID: userID.(int),
+	}
+
+	if err := ctx.BindJSON(input); err != nil {
+		errMsg := "deposit fail"
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		return
+	}
+
+	h.services.WalletService.Deposit(input)
+
 }
 
 func (h *handler) Withdraw(ctx *gin.Context) {}

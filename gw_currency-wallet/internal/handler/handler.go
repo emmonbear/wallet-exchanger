@@ -25,11 +25,10 @@ func NewHandler(
 	services *service.Service, logger *slog.Logger,
 ) *Handler {
 	return &Handler{
-		Service:         services,
 		AuthHandler:     auth.NewHandler(logger, services),
 		BalanceHandler:  balance.NewHandler(logger, services),
 		ExchangeHandler: exchange.NewHandler(),
-		WalletHandler:   wallet.NewHandler(),
+		WalletHandler:   wallet.NewHandler(logger, services),
 		Middleware:      middleware.NewHandler(logger, services),
 	}
 }
