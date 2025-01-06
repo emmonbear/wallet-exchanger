@@ -19,5 +19,6 @@ func NewRepository(db postgres.Database) *Repository {
 	return &Repository{
 		AuthRepository:    postgres.NewAuthPostgres(db),
 		BalanceRepository: postgres.NewBalancePostgres(db),
+		WalletRepository:  postgres.NewWalletPostgres(db),
 	}
 }
