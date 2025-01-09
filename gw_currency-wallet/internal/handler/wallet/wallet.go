@@ -31,6 +31,7 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 
 func (h *handler) Deposit(ctx *gin.Context) {
 	userID, ok := ctx.Get(middleware.UserCtx)
+
 	if !ok {
 		errMsg := "user id not found"
 		h.logger.Error(errMsg)
@@ -48,7 +49,26 @@ func (h *handler) Deposit(ctx *gin.Context) {
 		return
 	}
 
-	h.services.WalletService.Deposit(input)
+	_, err := h.services.WalletService.Deposit(input)
+	if err != nil {
+		errMsg := "deposit fail"
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid amount or currency",
+		})
+		return
+	}
+
+	balance, _ := h.services.BalanceService.GetBalance(userID.(int))
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Account topped up successfully",
+		"new_balance": gin.H{
+			"USD": balance.USD,
+			"RUB": balance.RUB,
+			"EUR": balance.EUR,
+		},
+	})
 
 }
 
