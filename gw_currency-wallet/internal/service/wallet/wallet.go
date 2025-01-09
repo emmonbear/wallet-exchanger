@@ -7,6 +7,7 @@ import (
 
 type WalletService interface {
 	Deposit(wallet *model.Wallet) (float64, error)
+	Withdraw(wallet *model.Wallet) (float64, error)
 }
 
 type service struct {
@@ -19,4 +20,8 @@ func NewService(repo wallet.WalletRepository) *service {
 
 func (s *service) Deposit(wallet *model.Wallet) (float64, error) {
 	return s.repo.Deposit(wallet)
+}
+
+func (s *service) Withdraw(wallet *model.Wallet) (float64, error) {
+	return s.repo.Withdraw(wallet)
 }
