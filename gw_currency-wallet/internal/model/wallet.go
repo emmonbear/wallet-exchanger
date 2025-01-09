@@ -7,6 +7,7 @@ type Balance struct {
 }
 
 type Wallet struct {
+	UserID   int
 	Amount   float64 `json:"amount" binding:"required"`
 	Currency string  `json:"currency" binding:"required"`
 }
