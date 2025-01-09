@@ -26,6 +26,8 @@ type Database interface {
 type TransactionFunc func(tx *sqlx.Tx) error
 
 func New(cfg *config.Config) (*Storage, error) {
+	const op = "repository.postgres.New"
+
 	connStr := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.StorageConfig.DBHost,
@@ -37,7 +39,7 @@ func New(cfg *config.Config) (*Storage, error) {
 	)
 	db, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %v", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &Storage{db: db}, nil

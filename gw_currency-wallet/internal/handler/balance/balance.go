@@ -1,7 +1,7 @@
 package balance
 
 import (
-	"fmt"
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -28,23 +28,30 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 }
 
 func (h *handler) GetBalance(ctx *gin.Context) {
-	userID, ok := ctx.Get(middleware.UserCtx) // Извлекаем userID из контекста
+	const (
+		op                  = "handler.balance.GetBalance"
+		userNotFoundMessage = "user id not found"
+	)
+
+	sl.LogRequest(h.logger, ctx, op)
+
+	userID, ok := ctx.Get(middleware.UserCtx)
 	if !ok {
-		errMsg := "user id not found"
-		h.logger.Error(errMsg)
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		err := errors.New(userNotFoundMessage)
+		sl.LogError(h.logger, op, err)
+		sl.NewErrorResponse(ctx, http.StatusBadRequest, userNotFoundMessage)
 		return
 	}
 
-	balance, err := h.services.BalanceService.GetBalance(userID.(int)) // Передаем userID в сервис
-	if err != nil {
-		errMsg := "error in receiving balance"
-		h.logger.Error(errMsg, slog.String("error", err.Error())) // Логируем ошибку, если она есть
-		sl.NewErrorResponse(ctx, http.StatusInternalServerError, errMsg, h.logger, err)
-		return
-	}
+	sl.LogInfo(h.logger, op, "Attempting to retrieve user balance")
+	balance, _ := h.services.BalanceService.GetBalance(userID.(int))
+	sl.LogInfo(h.logger, op, "Balance successfully received")
 
-	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"balance": balance,
+	sl.NewSuccessResponse(ctx, http.StatusOK, gin.H{
+		"balance": gin.H{
+			"USD": balance.USD,
+			"RUB": balance.RUB,
+			"EUR": balance.EUR,
+		},
 	})
 }

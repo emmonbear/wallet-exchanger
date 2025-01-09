@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -33,31 +33,50 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 }
 
 func (h *handler) UserIdentity(ctx *gin.Context) {
+	const (
+		op                      = "handler.middleware.UserIdentity"
+		errEmptyAuthHeader      = "empty auth header"
+		errInvalidAuthHeader    = "invalid auth header"
+		errParsingToken         = "error parsing token"
+		successParsingToken     = "Token parsed successfully"
+		successParsingUserToken = "Parsing token"
+	)
+
 	header := ctx.GetHeader(authorizationHeader)
 	if header == "" {
-		errMsg := "empty auth header"
-		h.logger.Error("Authorization header is missing", slog.String("error", errMsg))
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
-		return
+		err := errors.New(errEmptyAuthHeader)
+		sl.LogError(
+			h.logger, op, err, slog.String("error", errEmptyAuthHeader),
+		)
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errEmptyAuthHeader)
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
-		errMsg := "invalid auth header"
-		h.logger.Error("Authorization header format is incorrect", slog.String("error", errMsg), slog.String("header", header))
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		err := errors.New(errInvalidAuthHeader)
+		sl.LogError(h.logger, op, err,
+			slog.String("error", errInvalidAuthHeader),
+			slog.String("header", header),
+		)
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errInvalidAuthHeader)
 		return
 	}
 
-	h.logger.Info("Parsing token", slog.String("token", headerParts[1]))
+	sl.LogInfo(
+		h.logger, op, successParsingUserToken,
+		slog.String("token", headerParts[1]),
+	)
 
 	userID, err := h.services.AuthService.ParseToken(headerParts[1])
 	if err != nil {
-		h.logger.Error("Error parsing token", slog.String("error", err.Error()), slog.String("token", headerParts[1]))
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, err.Error(), h.logger, err)
+		sl.LogError(h.logger, op, err,
+			slog.String(
+				"error", err.Error()), slog.String("token", headerParts[1]),
+		)
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errParsingToken)
 		return
 	}
 
-	h.logger.Info("Token parsed successfully", slog.Int("userID", userID))
+	sl.LogInfo(h.logger, op, successParsingToken, slog.Int("userID", userID))
 	ctx.Set(UserCtx, userID)
 }

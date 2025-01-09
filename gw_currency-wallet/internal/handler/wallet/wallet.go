@@ -1,7 +1,7 @@
 package wallet
 
 import (
-	"fmt"
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -30,12 +30,19 @@ func NewHandler(logger *slog.Logger, services *service.Service) *handler {
 }
 
 func (h *handler) Deposit(ctx *gin.Context) {
+	const (
+		op                  = "handler.wallet.Deposit"
+		userNotFoundMessage = "user id not found"
+		invalidRequest      = "Invalid amount or currency"
+	)
+
+	sl.LogRequest(h.logger, ctx, op)
 	userID, ok := ctx.Get(middleware.UserCtx)
 
 	if !ok {
-		errMsg := "user id not found"
-		h.logger.Error(errMsg)
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		err := errors.New(userNotFoundMessage)
+		sl.LogError(h.logger, op, err)
+		sl.NewErrorResponse(ctx, http.StatusBadRequest, userNotFoundMessage)
 		return
 	}
 
@@ -44,24 +51,32 @@ func (h *handler) Deposit(ctx *gin.Context) {
 	}
 
 	if err := ctx.BindJSON(input); err != nil {
-		errMsg := "deposit fail"
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
+		sl.LogError(h.logger, op, err)
+		sl.NewErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	sl.LogInfo(h.logger, op, "Attempting to replenish the account")
 
 	_, err := h.services.WalletService.Deposit(input)
 	if err != nil {
-		errMsg := "deposit fail"
-		sl.NewErrorResponse(ctx, http.StatusUnauthorized, errMsg, h.logger, fmt.Errorf(errMsg))
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid amount or currency",
-		})
+		sl.LogError(h.logger, op, err,
+			slog.Int("UserID", input.UserID),
+			slog.String("Currency", input.Currency),
+			slog.Float64("Amount", input.Amount),
+		)
+		sl.NewErrorResponse(ctx, http.StatusUnauthorized, invalidRequest)
 		return
 	}
+	sl.LogInfo(h.logger, op, "Balance successfully replenished",
+		slog.Int("UserID", input.UserID),
+		slog.String("Currency", input.Currency),
+		slog.Float64("Amount", input.Amount),
+	)
 
 	balance, _ := h.services.BalanceService.GetBalance(userID.(int))
 
-	ctx.JSON(http.StatusOK, gin.H{
+	sl.NewSuccessResponse(ctx, http.StatusCreated, gin.H{
 		"message": "Account topped up successfully",
 		"new_balance": gin.H{
 			"USD": balance.USD,
@@ -69,7 +84,6 @@ func (h *handler) Deposit(ctx *gin.Context) {
 			"EUR": balance.EUR,
 		},
 	})
-
 }
 
 func (h *handler) Withdraw(ctx *gin.Context) {}
