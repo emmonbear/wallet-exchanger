@@ -39,7 +39,7 @@ func main() {
 	fmt.Println(cfg)
 
 	log := setupLogger(cfg.Env)
-	log.Info("starting wallet-server", slog.String("env", cfg.Env))
+	log.Info("starting wallet server", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
 	db, err := postgres.New(cfg)
@@ -54,15 +54,9 @@ func main() {
 	srv := new(server.Server)
 	if err := srv.Run(cfg.Listen.PortEndpoint, handlers.InitRoutes()); err != nil {
 		log.Error("error occured while running http server", sl.Err(err))
+		os.Exit(1)
 	}
 
-	// router := chi.NewRouter()
-
-	// TODO: middleware - Добавить логгер запросов
-	// TODO: middleware - Реализовать recoverer
-	// TODO: slog - Реализовать PrettyLogger
-
-	// TODO: run server:
 }
 
 func setupLogger(env string) *slog.Logger {
