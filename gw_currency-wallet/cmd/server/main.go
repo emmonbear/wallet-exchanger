@@ -1,9 +1,6 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"log"
 	"log/slog"
 	"os"
 
@@ -24,23 +21,17 @@ const (
 	envProd  = "prod"
 )
 
-var configPath string
-
-func init() {
-	flag.StringVar(&configPath, "c", "", "Path to config file")
-	flag.Parse()
-
-	if configPath == "" {
-		log.Fatalf("Config file path not provided. Use -c flag to specify the path")
-	}
-}
-
 func main() {
-	cfg := config.MustLoad(configPath)
-	fmt.Println(cfg)
+	cfg := config.MustLoad()
 
 	log := setupLogger(cfg.Env)
-	log.Info("starting wallet server", slog.String("env", cfg.Env))
+
+	log.Info("configuration",
+		slog.String("env", cfg.Env),
+		slog.Any("listen", cfg.Listen),
+		slog.Any("storage_config", cfg.StorageConfig),
+	)
+
 	log.Debug("debug messages are enabled")
 
 	db, err := postgres.New(cfg)
@@ -48,6 +39,8 @@ func main() {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
+
+	log.Info("successful database initialization")
 
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
