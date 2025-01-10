@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	"flag"
 	"os"
 	"time"
 
@@ -33,16 +33,34 @@ type StorageConfig struct {
 	DBSSLMode  string `env:"DB_SSLMODE" env-default:"disable"`
 }
 
-func MustLoad(configPath string) *Config {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist: %s", configPath)
+func MustLoad() *Config {
+	path := fetchConfigPath()
+	if path == "" {
+		panic("config path is empty")
+	}
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		panic("config file does not exist: " + path)
 	}
 
 	var cfg Config
-
-	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("cannot open config: %s", err)
+	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
+		panic("failed to read config: " + err.Error())
 	}
 
 	return &cfg
+}
+
+func fetchConfigPath() string {
+	var res string
+
+	// -c ="path/to/config.env"
+	flag.StringVar(&res, "c", "", "path to config file")
+	flag.Parse()
+
+	if res == "" {
+		res = os.Getenv("CONFIG_PATH")
+	}
+
+	return res
 }
