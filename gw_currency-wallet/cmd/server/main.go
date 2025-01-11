@@ -25,11 +25,7 @@ func main() {
 
 	log := logger.SetupLogger(cfg.Env)
 
-	log.Info("configuration",
-		slog.String("env", cfg.Env),
-		slog.Any("listen", cfg.Listen),
-		slog.Any("storage_config", cfg.StorageConfig),
-	)
+	log.Info("configuration", slog.Any("Config", cfg))
 
 	log.Debug("debug messages are enabled")
 
