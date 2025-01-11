@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/emmonbear/pkg/logger/handlers/slogpretty"
+	"github.com/emmonbear/wallet-exchanger/pkg/logger/handlers/slogpretty"
 )
 
 const (
