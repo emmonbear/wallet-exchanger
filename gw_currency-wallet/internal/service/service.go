@@ -1,11 +1,11 @@
 package service
 
 import (
-	"github.com/emmonbear/wallet-exchanger/internal/repository"
-	"github.com/emmonbear/wallet-exchanger/internal/service/auth"
-	"github.com/emmonbear/wallet-exchanger/internal/service/balance"
-	"github.com/emmonbear/wallet-exchanger/internal/service/exchange"
-	"github.com/emmonbear/wallet-exchanger/internal/service/wallet"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service/auth"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service/balance"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service/exchange"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service/wallet"
 )
 
 type Service struct {

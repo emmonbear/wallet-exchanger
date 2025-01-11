@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/emmonbear/wallet-exchanger/internal/config"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/config"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )

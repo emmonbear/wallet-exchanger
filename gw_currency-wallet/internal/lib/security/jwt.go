@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/emmonbear/wallet-exchanger/internal/model"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/model"
 )
 
 const tokenTTL = 12 * time.Hour

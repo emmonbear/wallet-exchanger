@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/emmonbear/wallet-exchanger/internal/handler/middleware"
-	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
-	"github.com/emmonbear/wallet-exchanger/internal/service"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/middleware"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service"
 	"github.com/gin-gonic/gin"
 )
 

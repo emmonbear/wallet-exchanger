@@ -4,15 +4,14 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/emmonbear/wallet-exchanger/internal/config"
-	"github.com/emmonbear/wallet-exchanger/internal/handler"
-	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/handlers/slogpretty"
-	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
-	"github.com/emmonbear/wallet-exchanger/internal/repository"
-	"github.com/emmonbear/wallet-exchanger/internal/repository/postgres"
-	"github.com/emmonbear/wallet-exchanger/internal/server"
-	"github.com/emmonbear/wallet-exchanger/internal/service"
-	_ "github.com/lib/pq"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/config"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository/postgres"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/server"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service"
+	"github.com/emmonbear/wallet-exchanger/pkg/logger"
 )
 
 const (
@@ -24,7 +23,7 @@ const (
 func main() {
 	cfg := config.MustLoad()
 
-	log := setupLogger(cfg.Env)
+	log := logger.SetupLogger(cfg.Env)
 
 	log.Info("configuration",
 		slog.String("env", cfg.Env),
@@ -51,33 +50,4 @@ func main() {
 		os.Exit(1)
 	}
 
-}
-
-func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
-	switch env {
-	case envLocal:
-		log = setupPrettySlog()
-	case envDev:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
-		)
-	case envProd:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
-	}
-
-	return log
-}
-
-func setupPrettySlog() *slog.Logger {
-	opts := slogpretty.PrettyHandlerOptions{
-		SlogOpts: &slog.HandlerOptions{
-			Level: slog.LevelDebug,
-		},
-	}
-
-	handler := opts.NewPrettyHandler(os.Stdout)
-	return slog.New(handler)
 }

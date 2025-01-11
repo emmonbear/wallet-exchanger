@@ -1,6 +1,6 @@
 package wallet
 
-import "github.com/emmonbear/wallet-exchanger/internal/model"
+import "github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/model"
 
 type WalletRepository interface {
 	Deposit(wallet *model.Wallet) (float64, error)

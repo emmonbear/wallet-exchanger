@@ -3,12 +3,12 @@ package handler
 import (
 	"log/slog"
 
-	"github.com/emmonbear/wallet-exchanger/internal/handler/auth"
-	"github.com/emmonbear/wallet-exchanger/internal/handler/balance"
-	"github.com/emmonbear/wallet-exchanger/internal/handler/exchange"
-	"github.com/emmonbear/wallet-exchanger/internal/handler/middleware"
-	"github.com/emmonbear/wallet-exchanger/internal/handler/wallet"
-	"github.com/emmonbear/wallet-exchanger/internal/service"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/auth"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/balance"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/exchange"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/middleware"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/handler/wallet"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service"
 	"github.com/gin-gonic/gin"
 )
 

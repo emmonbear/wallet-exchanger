@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"github.com/emmonbear/wallet-exchanger/internal/lib/security"
-	"github.com/emmonbear/wallet-exchanger/internal/model"
-	"github.com/emmonbear/wallet-exchanger/internal/repository/auth"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/lib/security"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/model"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository/auth"
 )
 
 type AuthService interface {

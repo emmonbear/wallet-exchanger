@@ -1,8 +1,8 @@
 package wallet
 
 import (
-	"github.com/emmonbear/wallet-exchanger/internal/model"
-	"github.com/emmonbear/wallet-exchanger/internal/repository/wallet"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/model"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository/wallet"
 )
 
 type WalletService interface {

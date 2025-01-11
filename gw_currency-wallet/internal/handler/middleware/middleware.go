@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/emmonbear/wallet-exchanger/internal/lib/logger/sl"
-	"github.com/emmonbear/wallet-exchanger/internal/service"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/lib/logger/sl"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/service"
 	"github.com/gin-gonic/gin"
 )
 

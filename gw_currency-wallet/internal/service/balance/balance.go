@@ -1,8 +1,8 @@
 package balance
 
 import (
-	"github.com/emmonbear/wallet-exchanger/internal/model"
-	"github.com/emmonbear/wallet-exchanger/internal/repository/balance"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/model"
+	"github.com/emmonbear/wallet-exchanger/gw_currency-wallet/internal/repository/balance"
 )
 
 type BalanceService interface {
