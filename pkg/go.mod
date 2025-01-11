@@ -1,4 +1,4 @@
-module github.com/emmonbear/pkg
+module github.com/emmonbear/wallet-exchanger/pkg
 
 go 1.23.4
 
